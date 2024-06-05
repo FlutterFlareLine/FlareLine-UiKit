@@ -14,8 +14,6 @@ abstract class FlarelineLayoutWidget extends StatelessWidget {
 
   String get appName => 'Flareline';
 
-  String get sideBarAsset => 'assets/routes/menu_route_en.json';
-
   bool get showTitle => true;
 
   bool get isAlignCenter => false;
@@ -33,6 +31,10 @@ abstract class FlarelineLayoutWidget extends StatelessWidget {
   Color get sideBarLightColor => Colors.white;
 
   Color? get backgroundColor => null;
+
+  String sideBarAsset(BuildContext context) {
+    return 'assets/routes/menu_route_en.json';
+  }
 
   bool isDarkTheme(BuildContext context) {
     return Theme.of(context).brightness == Brightness.dark;
@@ -98,7 +100,7 @@ abstract class FlarelineLayoutWidget extends StatelessWidget {
                     darkBg: sideBarDarkColor,
                     lightBg: sideBarLightColor,
                     appName: appName,
-                    sideBarAsset: sideBarAsset,
+                    sideBarAsset: sideBarAsset(context),
                     logoWidget: logoWidget(context),
                   ),
                 Expanded(child: rightContentWidget(context))
@@ -109,7 +111,9 @@ abstract class FlarelineLayoutWidget extends StatelessWidget {
           return rightContentWidget(context);
         },
       ),
-      drawer: SideBarWidget(key: UniqueKey(),),
+      drawer: SideBarWidget(
+        key: UniqueKey(),
+      ),
     );
   }
 
