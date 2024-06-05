@@ -31,7 +31,7 @@ class SideMenuWidget extends StatelessWidget {
     return Column(children: [
       InkWell(
         child: Container(
-            padding: const EdgeInsets.only(left: 20, top: 10, bottom: 10),
+            padding: const EdgeInsets.only(left: 10, top: 10, bottom: 10),
             decoration: BoxDecoration(
               gradient: isSelected
                   ? (isDark
@@ -54,7 +54,7 @@ class SideMenuWidget extends StatelessWidget {
               children: [
                 if (e['icon'] != null)
                   Container(
-                    margin: const EdgeInsets.only(right: 10),
+                    margin: const EdgeInsets.symmetric(horizontal: 10),
                     child: SvgPicture.asset(
                       e['icon'],
                       width: 18,
@@ -66,6 +66,7 @@ class SideMenuWidget extends StatelessWidget {
                 Expanded(
                     child: Text(
                   e['menuName'],
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                       color: isDark
                           ? Colors.white
@@ -105,8 +106,9 @@ class SideMenuWidget extends StatelessWidget {
   }
 
   Widget _itemSubMenuWidget(BuildContext context, e, bool isDark) {
-    bool isSelected =
-        context.watch<SideBarProvider>().isSelectedPath(context, e['path'] ?? '');
+    bool isSelected = context
+        .watch<SideBarProvider>()
+        .isSelectedPath(context, e['path'] ?? '');
 
     return InkWell(
       child: Container(
