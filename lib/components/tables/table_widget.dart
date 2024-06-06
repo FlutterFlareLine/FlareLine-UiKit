@@ -34,7 +34,7 @@ abstract class TableWidget<S extends BaseTableProvider>
 
   /// title
   String? title(BuildContext context) {
-    return '';
+    return null;
   }
 
   ///tools widget
@@ -103,6 +103,8 @@ abstract class TableWidget<S extends BaseTableProvider>
 
   bool get isLastColumnFixed => false;
 
+  bool get showCheckboxColumn => false;
+
   ColumnWidthMode get columnWidthMode => ColumnWidthMode.fill;
 
   Widget _sfDataGrid(BuildContext context, List<String> headers,
@@ -133,6 +135,10 @@ abstract class TableWidget<S extends BaseTableProvider>
         Expanded(
             child: SfDataGrid(
               source: dataGridSource,
+              showCheckboxColumn: showCheckboxColumn,
+              selectionMode: SelectionMode.multiple,
+              checkboxColumnSettings: DataGridCheckboxColumnSettings(
+                  width: 40 ),
               footerFrozenColumnsCount: isLastColumnFixed ? 1 : 0,
               isScrollbarAlwaysShown: true,
               columnWidthMode: columnWidthMode,
