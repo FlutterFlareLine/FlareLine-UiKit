@@ -81,19 +81,24 @@ abstract class TableWidget<S extends BaseTableProvider>
         child: _sfDataGrid(context, headers, rows, viewModel));
   }
 
-  BaseDataGridSource baseDataGridSource(
-      BuildContext context,
+  BaseDataGridSource baseDataGridSource(BuildContext context,
       List<List<TableDataRowsTableDataRows>> rows,
       viewModel,
       Widget? Function(
-              BuildContext context, TableDataRowsTableDataRows columnData)
-          actionWidgetsBuilder,
+          BuildContext context, TableDataRowsTableDataRows columnData)
+      actionWidgetsBuilder,
       customWidgetsBuilder,
       Function(BuildContext context, bool checked,
-              TableDataRowsTableDataRows columnData)
-          onToggleChanged) {
-    return BaseDataGridSource(context, rows, viewModel, actionWidgetsBuilder,
-        customWidgetsBuilder, onToggleChanged, pageSize);
+          TableDataRowsTableDataRows columnData)
+      onToggleChanged) {
+    return BaseDataGridSource(
+        context,
+        rows,
+        viewModel,
+        actionWidgetsBuilder,
+        customWidgetsBuilder,
+        onToggleChanged,
+        pageSize);
   }
 
   bool get isLastColumnFixed => false;
@@ -106,13 +111,15 @@ abstract class TableWidget<S extends BaseTableProvider>
       context,
       rows,
       viewModel,
-      (BuildContext context, TableDataRowsTableDataRows columnData) {
-        return actionWidgetsBuilder(context, columnData, viewModel);
+          (BuildContext context, TableDataRowsTableDataRows columnData) {
+        return actionWidgetsBuilder(context, columnData, viewModel) ??
+            SizedBox.shrink();
       },
-      (BuildContext context, TableDataRowsTableDataRows columnData) {
-        return customWidgetsBuilder(context, columnData, viewModel);
+          (BuildContext context, TableDataRowsTableDataRows columnData) {
+        return customWidgetsBuilder(context, columnData, viewModel) ??
+            SizedBox.shrink();
       },
-      (BuildContext context, bool checked,
+          (BuildContext context, bool checked,
           TableDataRowsTableDataRows columnData) {
         onToggleChanged(context, checked, columnData);
       },
@@ -125,12 +132,12 @@ abstract class TableWidget<S extends BaseTableProvider>
       children: [
         Expanded(
             child: SfDataGrid(
-          source: dataGridSource,
-          footerFrozenColumnsCount: isLastColumnFixed ? 1 : 0,
-          isScrollbarAlwaysShown: true,
-          columnWidthMode: columnWidthMode,
-          columns: headers.map((e) => gridColumnWidget(e)).toList(),
-        )),
+              source: dataGridSource,
+              footerFrozenColumnsCount: isLastColumnFixed ? 1 : 0,
+              isScrollbarAlwaysShown: true,
+              columnWidthMode: columnWidthMode,
+              columns: headers.map((e) => gridColumnWidget(e)).toList(),
+            )),
         if (showPaging && rows.isNotEmpty)
           SizedBox(
               height: 60,
@@ -154,7 +161,7 @@ abstract class TableWidget<S extends BaseTableProvider>
     return GridColumn(
       width: gridColumnWidgetWidth(e),
       columnName: e,
-      label: Text(e),
+      label: Center(child: Text(e),),
     );
   }
 
@@ -164,28 +171,29 @@ abstract class TableWidget<S extends BaseTableProvider>
     Widget? tools = toolsWidget(context, viewModel);
     return CommonCard(
         child: Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (titleText != null)
-            Text(
-              titleText,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-            ),
-          if (titleText != null)
-            const SizedBox(
-              height: 16,
-            ),
-          if (tools != null)
-            Container(
-              child: tools,
-              margin: EdgeInsets.only(bottom: 16),
-            ),
-          Expanded(child: _buildWidget(context, viewModel)),
-        ],
-      ),
-    ));
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (titleText != null)
+                Text(
+                  titleText,
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+              if (titleText != null)
+                const SizedBox(
+                  height: 16,
+                ),
+              if (tools != null)
+                Container(
+                  child: tools,
+                  margin: EdgeInsets.only(bottom: 16),
+                ),
+              Expanded(child: _buildWidget(context, viewModel)),
+            ],
+          ),
+        ));
   }
 
   refresh(BuildContext context) {}
@@ -195,12 +203,12 @@ class BaseDataGridSource<F extends BaseTableProvider> extends DataGridSource {
   late BuildContext context;
 
   final Widget? Function(
-          BuildContext context, TableDataRowsTableDataRows columnData)
-      actionWidgetsBuilder;
+      BuildContext context, TableDataRowsTableDataRows columnData)
+  actionWidgetsBuilder;
 
   final Widget? Function(
-          BuildContext context, TableDataRowsTableDataRows columnData)
-      customWidgetsBuilder;
+      BuildContext context, TableDataRowsTableDataRows columnData)
+  customWidgetsBuilder;
 
   final Function(BuildContext context, bool checked,
       TableDataRowsTableDataRows columnData) onToggleChanged;
@@ -209,8 +217,7 @@ class BaseDataGridSource<F extends BaseTableProvider> extends DataGridSource {
 
   late List<List<TableDataRowsTableDataRows>> list;
 
-  BaseDataGridSource(
-      this.context,
+  BaseDataGridSource(this.context,
       this.list,
       F viewModel,
       this.actionWidgetsBuilder,
@@ -228,11 +235,12 @@ class BaseDataGridSource<F extends BaseTableProvider> extends DataGridSource {
       _data = list
           .getRange(startIndex, endIndex)
           .toList(growable: false)
-          .map<DataGridRow>((e) => DataGridRow(
+          .map<DataGridRow>((e) =>
+          DataGridRow(
               cells: e
                   .map<DataGridCell>((item) =>
-                      DataGridCell<TableDataRowsTableDataRows>(
-                          columnName: item.columnName ?? '', value: item))
+                  DataGridCell<TableDataRowsTableDataRows>(
+                      columnName: item.columnName ?? '', value: item))
                   .toList()))
           .toList();
     } else {
@@ -249,8 +257,8 @@ class BaseDataGridSource<F extends BaseTableProvider> extends DataGridSource {
   DataGridRowAdapter? buildRow(DataGridRow row) {
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((dataGridCell) {
-      return cellWidget(dataGridCell.value);
-    }).toList());
+          return Center(child: cellWidget(dataGridCell.value),);
+        }).toList());
   }
 
   @override
@@ -312,12 +320,12 @@ class BaseDataGridSource<F extends BaseTableProvider> extends DataGridSource {
       height: 40,
       child: (columnData.text != null && columnData.text != ''
           ? Image.network(
-              columnData.text!,
-              fit: BoxFit.contain,
-              errorBuilder: (context, exception, stacktrace) {
-                return Text(stacktrace.toString());
-              },
-            )
+        columnData.text!,
+        fit: BoxFit.contain,
+        errorBuilder: (context, exception, stacktrace) {
+          return Text(stacktrace.toString());
+        },
+      )
           : SizedBox.shrink()),
     );
   }
