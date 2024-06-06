@@ -148,21 +148,6 @@ abstract class TableWidget<S extends BaseTableProvider>
     );
   }
 
-  Widget cellWidget(BuildContext context, S viewModel,
-      TableDataRowsTableDataRows columnData) {
-    if (columnData.dataType == CellDataType.TAG.type) {
-      return TagWidget(
-        text: columnData.text ?? '',
-        tagType: TagType.getTagType(columnData.tagType),
-      );
-    }
-    String text = columnData.text ?? '';
-    if (text.length > 50) {
-      text = '${text.substring(0, 50)}...';
-    }
-    return Text(text);
-  }
-
   @override
   Widget bodyWidget(BuildContext context, S viewModel, Widget? child) {
     String? titleText = title(context);
