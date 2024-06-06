@@ -2,7 +2,6 @@ library flareline_uikit;
 
 import 'package:flareline_uikit/components/sidebar/side_bar.dart';
 import 'package:flareline_uikit/core/theme/flareline_colors.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flareline_uikit/components/breaktab.dart';
@@ -37,7 +36,9 @@ abstract class FlarelineLayoutWidget extends StatelessWidget {
   }
 
   bool isDarkTheme(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark;
+    return Theme
+        .of(context)
+        .brightness == Brightness.dark;
   }
 
   EdgeInsetsGeometry? get padding =>
@@ -70,8 +71,16 @@ abstract class FlarelineLayoutWidget extends StatelessWidget {
     return null;
   }
 
+  Widget? breakTabRightWidget(BuildContext context) {
+    return null;
+  }
+
   String breakTabTitle(BuildContext context) {
     return '';
+  }
+
+  Widget? breakTabWidget(BuildContext context) {
+    return null;
   }
 
   Widget contentDesktopWidget(BuildContext context);
@@ -120,32 +129,34 @@ abstract class FlarelineLayoutWidget extends StatelessWidget {
   Widget rightContentWidget(BuildContext context) {
     Widget contentWidget = Column(
       children: [
-        if (showTitle) BreakTab(breakTabTitle(context)),
+        if (showTitle) SizedBox(height: 50,child: breakTabWidget(context) ??
+            BreakTab(breakTabTitle(context),
+              rightWidget: breakTabRightWidget(context),),),
         if (showTitle)
           const SizedBox(
             height: 10,
           ),
         isContentScroll
             ? ScreenTypeLayout.builder(
-                desktop: contentDesktopWidget,
-                mobile: contentMobileWidget,
-                tablet: contentMobileWidget,
-              )
+          desktop: contentDesktopWidget,
+          mobile: contentMobileWidget,
+          tablet: contentMobileWidget,
+        )
             : Expanded(
-                child: ScreenTypeLayout.builder(
-                desktop: contentDesktopWidget,
-                mobile: contentMobileWidget,
-                tablet: contentMobileWidget,
-              ))
+            child: ScreenTypeLayout.builder(
+              desktop: contentDesktopWidget,
+              mobile: contentMobileWidget,
+              tablet: contentMobileWidget,
+            ))
       ],
     );
 
     return Column(children: [
       if (showToolBar)
         toolbarWidget(
-              context,
-              showDrawer,
-            ) ??
+          context,
+          showDrawer,
+        ) ??
             SizedBox.shrink(),
       if (showToolBar)
         const SizedBox(
@@ -153,14 +164,14 @@ abstract class FlarelineLayoutWidget extends StatelessWidget {
         ),
       Expanded(
           child: Container(
-        width: double.maxFinite,
-        height: double.maxFinite,
-        alignment: isAlignCenter ? Alignment.center : null,
-        padding: padding,
-        child: isContentScroll
-            ? SingleChildScrollView(child: contentWidget)
-            : contentWidget,
-      ))
+            width: double.maxFinite,
+            height: double.maxFinite,
+            alignment: isAlignCenter ? Alignment.center : null,
+            padding: padding,
+            child: isContentScroll
+                ? SingleChildScrollView(child: contentWidget)
+                : contentWidget,
+          ))
     ]);
   }
 }
