@@ -57,6 +57,12 @@ abstract class TableWidget<S extends BaseTableProvider>
     return null;
   }
 
+  ///custom widget
+  Widget? customWidgetsBuilder(BuildContext context,
+      TableDataRowsTableDataRows columnData, S viewModel) {
+    return null;
+  }
+
   ///toggle changed event
   onToggleChanged(BuildContext context, bool checked,
       TableDataRowsTableDataRows columnData) {}
@@ -82,11 +88,12 @@ abstract class TableWidget<S extends BaseTableProvider>
       Widget? Function(
               BuildContext context, TableDataRowsTableDataRows columnData)
           actionWidgetsBuilder,
+      customWidgetsBuilder,
       Function(BuildContext context, bool checked,
               TableDataRowsTableDataRows columnData)
           onToggleChanged) {
     return BaseDataGridSource(context, rows, viewModel, actionWidgetsBuilder,
-        onToggleChanged, pageSize);
+        customWidgetsBuilder, onToggleChanged, pageSize);
   }
 
   bool get isLastColumnFixed => false;
@@ -101,6 +108,9 @@ abstract class TableWidget<S extends BaseTableProvider>
       viewModel,
       (BuildContext context, TableDataRowsTableDataRows columnData) {
         return actionWidgetsBuilder(context, columnData, viewModel);
+      },
+      (BuildContext context, TableDataRowsTableDataRows columnData) {
+        return customWidgetsBuilder(context, columnData, viewModel);
       },
       (BuildContext context, bool checked,
           TableDataRowsTableDataRows columnData) {
@@ -183,9 +193,15 @@ abstract class TableWidget<S extends BaseTableProvider>
 
 class BaseDataGridSource<F extends BaseTableProvider> extends DataGridSource {
   late BuildContext context;
+
   final Widget? Function(
           BuildContext context, TableDataRowsTableDataRows columnData)
       actionWidgetsBuilder;
+
+  final Widget? Function(
+          BuildContext context, TableDataRowsTableDataRows columnData)
+      customWidgetsBuilder;
+
   final Function(BuildContext context, bool checked,
       TableDataRowsTableDataRows columnData) onToggleChanged;
 
@@ -193,8 +209,14 @@ class BaseDataGridSource<F extends BaseTableProvider> extends DataGridSource {
 
   late List<List<TableDataRowsTableDataRows>> list;
 
-  BaseDataGridSource(this.context, this.list, F viewModel,
-      this.actionWidgetsBuilder, this.onToggleChanged, this.pageSize) {
+  BaseDataGridSource(
+      this.context,
+      this.list,
+      F viewModel,
+      this.actionWidgetsBuilder,
+      this.customWidgetsBuilder,
+      this.onToggleChanged,
+      this.pageSize) {
     _loadPageData(0, pageSize);
   }
 
@@ -256,11 +278,18 @@ class BaseDataGridSource<F extends BaseTableProvider> extends DataGridSource {
           });
     }
 
-    if (CellDataType.ACTION.type == columnData.dataType && actionWidgetsBuilder!=null) {
+    if (CellDataType.CUSTOM.type == columnData.dataType &&
+        customWidgetsBuilder != null) {
+      return customWidgetsBuilder(context, columnData)!;
+    }
+
+    if (CellDataType.ACTION.type == columnData.dataType &&
+        actionWidgetsBuilder != null) {
       return actionWidgetsBuilder(context, columnData)!;
     }
 
-    if (CellDataType.IMAGE.type == columnData.dataType && _imageCellWidget!=null) {
+    if (CellDataType.IMAGE.type == columnData.dataType &&
+        _imageCellWidget != null) {
       return _imageCellWidget(columnData);
     }
 
