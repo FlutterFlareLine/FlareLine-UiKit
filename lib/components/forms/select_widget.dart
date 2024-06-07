@@ -1,10 +1,13 @@
 library flareline_uikit;
+
 import 'package:flareline_uikit/core/theme/flareline_colors.dart';
 import 'package:flutter/material.dart';
 
 class SelectWidget extends StatelessWidget {
   final List<String> selectionList;
-  SelectWidget({super.key,required this.selectionList});
+  final ValueChanged<String>? onDropdownChanged;
+  SelectWidget(
+      {super.key, required this.selectionList, this.onDropdownChanged});
 
   ValueNotifier<String> countryNotifier = ValueNotifier('');
 
@@ -35,6 +38,9 @@ class SelectWidget extends StatelessWidget {
                 }).toList(),
                 onChanged: (value) {
                   countryNotifier.value = value ?? '';
+                  if(onDropdownChanged!=null){
+                    onDropdownChanged!(countryNotifier.value);
+                  }
                 },
               ),
             );

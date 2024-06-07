@@ -220,15 +220,16 @@ class ToggleWidget extends StatelessWidget {
     bool isDark = context.watch<ThemeProvider>().isDark;
     return InkWell(
       child: Container(
-          padding: const EdgeInsets.all(1),
-          width: 85,
-          height: 34,
+          padding: const EdgeInsets.symmetric(vertical: 2,horizontal: 3),
+     
           decoration: BoxDecoration(
               color: FlarelineColors.background,
-              borderRadius: BorderRadius.circular(40)),
+              borderRadius: BorderRadius.circular(45)),
           child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               CircleAvatar(
+                radius: 15,
                 backgroundColor: isDark ? Colors.transparent : Colors.white,
                 child: SvgPicture.asset('assets/toolbar/sun.svg',
                     width: 18,
@@ -238,6 +239,7 @@ class ToggleWidget extends StatelessWidget {
                         : FlarelineColors.primary),
               ),
               CircleAvatar(
+                 radius: 15,
                 backgroundColor: isDark ? Colors.white : Colors.transparent,
                 child: SvgPicture.asset('assets/toolbar/moon.svg',
                     width: 18,

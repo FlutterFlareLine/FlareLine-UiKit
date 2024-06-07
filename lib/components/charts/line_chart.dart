@@ -1,4 +1,3 @@
-
 import 'package:flareline_uikit/components/forms/select_widget.dart';
 import 'package:flareline_uikit/core/theme/flareline_colors.dart';
 import 'package:flareline_uikit/service/base_provider.dart';
@@ -14,11 +13,25 @@ class LineChartWidget extends BaseStlessWidget<LineChartProvider> {
 
   final bool? isDropdownToggle;
 
+  final List<String> dropdownItems;
+
+  final ValueChanged<String>? onDropdownChanged;
+
   LineChartWidget(
       {super.key,
       required this.title,
       required this.datas,
-      this.isDropdownToggle});
+      this.isDropdownToggle,
+      required this.dropdownItems,
+      this.onDropdownChanged}) {
+    if (dropdownItems.isNotEmpty) {
+      valueNotifier = ValueNotifier(dropdownItems[0]);
+    } else {
+      valueNotifier = ValueNotifier('');
+    }
+  }
+
+  late ValueNotifier<String> valueNotifier;
 
   @override
   Widget bodyWidget(
@@ -70,7 +83,12 @@ class LineChartWidget extends BaseStlessWidget<LineChartProvider> {
         child: SizedBox(
           width: 140,
           child: SelectWidget(
-            selectionList: const ['Daily', 'Monthly', 'Yearly'],
+            selectionList: dropdownItems!,
+            onDropdownChanged: (item) {
+              if (onDropdownChanged != null) {
+                onDropdownChanged!(item);
+              }
+            },
           ),
         ));
   }
@@ -81,36 +99,51 @@ class LineChartWidget extends BaseStlessWidget<LineChartProvider> {
       alignment: Alignment.topRight,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-            color:
-                isDark ? FlarelineColors.darkBackground : FlarelineColors.gray,
-            child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-              MaterialButton(
-                  onPressed: () {},
-                  color: Theme.of(context).appBarTheme.backgroundColor,
-                  child: const Text('Day')),
-              MaterialButton(
-                onPressed: () {},
-                child: Text(
-                  'Week',
-                  style: TextStyle(
-                      color: isDark
-                          ? Colors.white
-                          : FlarelineColors.darkBackground),
-                ),
-              ),
-              MaterialButton(
-                onPressed: () {},
-                child: Text('Month',
-                    style: TextStyle(
-                        color: isDark
-                            ? Colors.white
-                            : FlarelineColors.darkBackground)),
-              )
-            ]),
-          )
+              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+              color: isDark
+                  ? FlarelineColors.darkBackground
+                  : FlarelineColors.gray,
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: dropdownItems!.map((item) {
+                    return ValueListenableBuilder(
+                        valueListenable: valueNotifier,
+                        builder: (c, selectedValue, child) {
+                          return InkWell(
+                              onTap: () {
+                                valueNotifier.value=item;
+                                if (onDropdownChanged != null) {
+                                  onDropdownChanged!(item);
+                                }
+                              },
+                              child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                      color: selectedValue == item
+                                          ? Theme.of(context)
+                                              .appBarTheme
+                                              .backgroundColor
+                                          : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(2),
+                                      border: selectedValue == item
+                                          ? Border.all(
+                                              width: 1,
+                                              color: FlarelineColors.border)
+                                          : null),
+                                  child: Text(
+                                    '${item}',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        color: (isDark
+                                            ? Colors.white
+                                            : FlarelineColors.darkBackground)),
+                                  )));
+                        });
+                  }).toList()))
         ],
       ),
     );
