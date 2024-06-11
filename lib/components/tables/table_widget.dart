@@ -45,11 +45,10 @@ abstract class TableWidget<S extends BaseTableProvider>
   ///action column width
   double get actionColumnWidth => 200;
 
-  //per pageSize
-  int get pageSize => 10;
 
   //paging
   bool get showPaging => true;
+
 
   ///actions widget
   Widget? actionWidgetsBuilder(BuildContext context,
@@ -98,7 +97,7 @@ abstract class TableWidget<S extends BaseTableProvider>
         actionWidgetsBuilder,
         customWidgetsBuilder,
         onToggleChanged,
-        pageSize);
+        viewModel.pageSize);
   }
 
   bool get isLastColumnFixed => false;
@@ -126,9 +125,9 @@ abstract class TableWidget<S extends BaseTableProvider>
         onToggleChanged(context, checked, columnData);
       },
     );
-    int pageCount = rows.length % pageSize == 0
-        ? rows.length ~/ pageSize
-        : rows.length ~/ pageSize + 1;
+    int pageCount = rows.length % viewModel.pageSize == 0
+        ? rows.length ~/ viewModel.pageSize
+        : rows.length ~/ viewModel.pageSize + 1;
 
     return Column(
       children: [
@@ -345,6 +344,17 @@ abstract class BaseTableProvider extends BaseProvider {
   TableDataEntity? get tableDataEntity => _tableDataEntity;
 
   bool isLoading = false;
+
+  int _pageSize =10;
+
+  //per pageSize
+  int get pageSize => _pageSize;
+
+  set pageSize(int size){
+    _pageSize = size;
+    notifyListeners();
+  }
+
 
   String get TAG => this.runtimeType.toString();
 
