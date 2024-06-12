@@ -6,7 +6,7 @@ part 'table_data_entity.g.dart';
 
 @JsonSerializable()
 class TableDataEntity {
-	List<String>? headers;
+	List<dynamic>? headers;
 	List<List<TableDataRowsTableDataRows>>? rows;
 
 	TableDataEntity();
@@ -28,6 +28,8 @@ class TableDataRowsTableDataRows {
 	String? tagType;
 	String? id;
 	String? columnName;
+	String? align;
+	dynamic? data;
 
 	TableDataRowsTableDataRows();
 

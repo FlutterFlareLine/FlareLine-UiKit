@@ -69,7 +69,7 @@ abstract class TableWidget<S extends BaseTableProvider>
   _buildWidget(BuildContext context, S viewModel) {
     bool isLoading = viewModel.isLoading;
     TableDataEntity? tableDataEntity = viewModel.tableDataEntity;
-    List<String> headers = tableDataEntity?.headers ?? [];
+    List<dynamic> headers = tableDataEntity?.headers ?? [];
     if (isLoading || tableDataEntity == null || headers.isEmpty) {
       return const LoadingWidget();
     }
@@ -104,9 +104,13 @@ abstract class TableWidget<S extends BaseTableProvider>
 
   bool get showCheckboxColumn => false;
 
+  bool get highlightRowOnHover => false;
+
+  double get rowHeight => double.nan;
+
   ColumnWidthMode get columnWidthMode => ColumnWidthMode.fill;
 
-  Widget _sfDataGrid(BuildContext context, List<String> headers,
+  Widget _sfDataGrid(BuildContext context, List<dynamic> headers,
       List<List<TableDataRowsTableDataRows>> rows, viewModel) {
     BaseDataGridSource dataGridSource = baseDataGridSource(
       context,
@@ -134,10 +138,13 @@ abstract class TableWidget<S extends BaseTableProvider>
         Expanded(
             child: SfDataGrid(
               source: dataGridSource,
+              rowHeight: rowHeight,
+              highlightRowOnHover: highlightRowOnHover,
               showCheckboxColumn: showCheckboxColumn,
+              gridLinesVisibility: GridLinesVisibility.horizontal,
               selectionMode: SelectionMode.multiple,
               checkboxColumnSettings: DataGridCheckboxColumnSettings(
-                  width: 40 ),
+                  width: 80),
               footerFrozenColumnsCount: isLastColumnFixed ? 1 : 0,
               isScrollbarAlwaysShown: true,
               columnWidthMode: columnWidthMode,
@@ -162,11 +169,22 @@ abstract class TableWidget<S extends BaseTableProvider>
     return double.nan;
   }
 
-  GridColumn gridColumnWidget(String e) {
+  GridColumn gridColumnWidget(dynamic e) {
+    String columnName;
+    String? align;
+    if (e is String) {
+      columnName = e;
+    } else {
+      columnName = e['columnName'] ?? '';
+      align = e['align'];
+    }
     return GridColumn(
-      width: gridColumnWidgetWidth(e),
-      columnName: e,
-      label: Center(child: Text(e),),
+      width: gridColumnWidgetWidth(columnName),
+      columnName: columnName,
+      label: Container(child: Text(columnName),
+        alignment: 'center' == align ? Alignment.center : ('right' == align
+            ? Alignment.centerRight
+            : Alignment.centerLeft),),
     );
   }
 
@@ -262,7 +280,15 @@ class BaseDataGridSource<F extends BaseTableProvider> extends DataGridSource {
   DataGridRowAdapter? buildRow(DataGridRow row) {
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((dataGridCell) {
-          return Center(child: cellWidget(dataGridCell.value),);
+          if(dataGridCell.value is TableDataRowsTableDataRows) {
+            String? align = dataGridCell.value.align;
+            return Container(child: cellWidget(dataGridCell.value),
+              alignment: 'center' == align ? Alignment.center : ('right' ==
+                  align
+                  ? Alignment.centerRight
+                  : Alignment.centerLeft),);
+          }
+          return SizedBox.shrink();
         }).toList());
   }
 
@@ -345,12 +371,12 @@ abstract class BaseTableProvider extends BaseProvider {
 
   bool isLoading = false;
 
-  int _pageSize =10;
+  int _pageSize = 10;
 
   //per pageSize
   int get pageSize => _pageSize;
 
-  set pageSize(int size){
+  set pageSize(int size) {
     _pageSize = size;
     notifyListeners();
   }
