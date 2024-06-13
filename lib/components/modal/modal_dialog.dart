@@ -11,6 +11,7 @@ class ModalDialog {
     String? title,
     bool? showTitle = false,
     bool? showTitleDivider = false,
+    Alignment? titleAlign=Alignment.center,
     Widget? child,
     Widget? footer,
     bool? showFooter,
@@ -89,7 +90,7 @@ class ModalDialog {
                                 children: [
                                   if (title != null)
                                     Align(
-                                      alignment: Alignment.center,
+                                      alignment: titleAlign!,
                                       child: Container(
                                         child: Text(
                                           title,
