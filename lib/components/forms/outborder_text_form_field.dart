@@ -17,6 +17,7 @@ class OutBorderTextFormField extends StatelessWidget {
   final TextInputAction? textInputAction;
   final ValueChanged<String>? onFieldSubmitted;
   final TextStyle? textStyle;
+  final TextStyle? hintStyle;
   final Color? focusColor;
 
   const OutBorderTextFormField(
@@ -24,6 +25,7 @@ class OutBorderTextFormField extends StatelessWidget {
       this.labelText,
       this.initialValue,
       this.hintText,
+      this.hintStyle,
       this.maxLines = 1,
       this.enabled,
       this.controller,
@@ -88,6 +90,7 @@ class OutBorderTextFormField extends StatelessWidget {
                     ),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                     hintText: hintText,
+                    hintStyle: hintStyle
                   ),
                 ),
               ),

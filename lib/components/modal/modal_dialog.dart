@@ -7,24 +7,56 @@ import 'package:flutter/material.dart';
 enum ModalType { small, medium, large }
 
 class ModalDialog {
-  static show(
-      {required BuildContext context,
-      String? title,
-      bool? showTitle = false,
-      bool? showTitleDivider = false,
-      Widget? child,
-      Widget? footer,
-      bool? showFooter,
-      ModalType modalType = ModalType.large,
-      GestureTapCallback? onCancelTap,
-      GestureTapCallback? onSaveTap}) {
-    double? width;
-    if (modalType == ModalType.large) {
-      width = MediaQuery.of(context).size.width * 0.6;
-    } else if (modalType == ModalType.medium) {
-      width = MediaQuery.of(context).size.width * 0.4;
-    } else if (modalType == ModalType.small) {
-      width = MediaQuery.of(context).size.width * 0.28;
+  static show({required BuildContext context,
+    String? title,
+    bool? showTitle = false,
+    bool? showTitleDivider = false,
+    Widget? child,
+    Widget? footer,
+    bool? showFooter,
+    bool? showCancel = true,
+    ModalType modalType = ModalType.large,
+    double? width,
+    GestureTapCallback? onCancelTap,
+    GestureTapCallback? onSaveTap}) {
+    if (width == null) {
+      if (modalType == ModalType.large) {
+        width = MediaQuery
+            .of(context)
+            .size
+            .width * 0.6;
+      } else if (modalType == ModalType.medium) {
+        width = MediaQuery
+            .of(context)
+            .size
+            .width * 0.4;
+      } else if (modalType == ModalType.small) {
+        width = MediaQuery
+            .of(context)
+            .size
+            .width * 0.28;
+      }
+    }
+
+    Widget confirmWidget;
+
+    if(showCancel!){
+      confirmWidget = SizedBox(
+        width: 120,
+        child: ButtonWidget(
+          btnText: 'Save',
+          onTap: onSaveTap,
+          type: ButtonType.primary.type,
+        ),
+      );
+    }else{
+      confirmWidget = Expanded(
+        child: ButtonWidget(
+          btnText: 'Save',
+          onTap: onSaveTap,
+          type: ButtonType.primary.type,
+        ),
+      );
     }
     return showGeneralDialog(
         context: context,
@@ -49,7 +81,8 @@ class ModalDialog {
                         children: [
                           if (showTitle != null)
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20),
                               alignment: Alignment.center,
                               height: 50,
                               child: Stack(
@@ -102,32 +135,29 @@ class ModalDialog {
                                     left: 20, right: 20, bottom: 20),
                                 child: Row(
                                   children: [
-                                    const Spacer(),
-                                    SizedBox(
-                                      width: 120,
-                                      child: ButtonWidget(
-                                        btnText: 'Cancel',
-                                        textColor:
-                                            FlarelineColors.darkBlackText,
-                                        onTap: () {
-                                          Navigator.of(context).pop();
-                                          if (onCancelTap != null) {
-                                            onCancelTap();
-                                          }
-                                        },
+                                    if(showCancel!)
+                                      const Spacer(),
+                                    if(showCancel!)
+                                      SizedBox(
+                                        width: 120,
+                                        child: ButtonWidget(
+                                          btnText: 'Cancel',
+                                          textColor:
+                                          FlarelineColors.darkBlackText,
+                                          onTap: () {
+                                            Navigator.of(context).pop();
+                                            if (onCancelTap != null) {
+                                              onCancelTap();
+                                            }
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      width: 20,
-                                    ),
-                                    SizedBox(
-                                      width: 120,
-                                      child: ButtonWidget(
-                                        btnText: 'Save',
-                                        onTap: onSaveTap,
-                                        type: ButtonType.primary.type,
+                                    if(showCancel!)
+                                      const SizedBox(
+                                        width: 20,
                                       ),
-                                    )
+                                    confirmWidget
+
                                   ],
                                 ),
                               )
