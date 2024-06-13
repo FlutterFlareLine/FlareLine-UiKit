@@ -280,7 +280,7 @@ class BaseDataGridSource<F extends BaseTableProvider> extends DataGridSource {
   DataGridRowAdapter? buildRow(DataGridRow row) {
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((dataGridCell) {
-          if(dataGridCell.value is TableDataRowsTableDataRows) {
+          if (dataGridCell.value is TableDataRowsTableDataRows) {
             String? align = dataGridCell.value.align;
             return Container(child: cellWidget(dataGridCell.value),
               alignment: 'center' == align ? Alignment.center : ('right' ==
@@ -317,9 +317,11 @@ class BaseDataGridSource<F extends BaseTableProvider> extends DataGridSource {
           });
     }
 
-    if (CellDataType.CUSTOM.type == columnData.dataType &&
-        customWidgetsBuilder != null) {
-      return customWidgetsBuilder(context, columnData)!;
+    if (CellDataType.TAG.type == columnData.dataType) {
+      return TagWidget(
+        text: columnData.text ?? '',
+        tagType: TagType.getTagType(columnData.tagType),
+      );
     }
 
     if (CellDataType.ACTION.type == columnData.dataType &&
@@ -332,12 +334,11 @@ class BaseDataGridSource<F extends BaseTableProvider> extends DataGridSource {
       return _imageCellWidget(columnData);
     }
 
-    if (CellDataType.TAG.type == columnData.dataType) {
-      return TagWidget(
-        text: columnData.text ?? '',
-        tagType: TagType.getTagType(columnData.tagType),
-      );
+    if (CellDataType.CUSTOM.type == columnData.dataType &&
+        customWidgetsBuilder != null) {
+      return customWidgetsBuilder(context, columnData)!;
     }
+
     String text = columnData.text ?? '';
     if (text.length > 50) {
       text = '${text.substring(0, 50)}...';
