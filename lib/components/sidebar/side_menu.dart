@@ -129,7 +129,6 @@ class SideMenuWidget extends StatelessWidget {
         ValueListenableBuilder(
             valueListenable: expandedMenuName,
             builder: (ctx, menuName, child) {
-              print('${menuName}  ${itemMenuName}');
               return Visibility(
                   visible: menuName == itemMenuName,
                   child: Column(
