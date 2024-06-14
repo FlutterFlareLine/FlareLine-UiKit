@@ -4,7 +4,7 @@ version: 0.0.5
 homepage:
 
 environment:
-  sdk: '>=3.4.1 <4.0.0'
+  sdk: '>=3.3.1 <4.0.0'
 
 dependencies:
   flutter:
@@ -71,6 +71,8 @@ dependencies:
   json_annotation: any
 
   window_location_href: ^1.0.1+2
+
+  desktop_drop: ^0.4.4
 
 dev_dependencies:
   flutter_test:
