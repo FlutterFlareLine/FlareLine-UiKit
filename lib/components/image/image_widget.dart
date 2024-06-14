@@ -7,15 +7,17 @@ class ImageWidget extends StatelessWidget {
   final double? height;
   final BoxFit? fit;
   final bool? isCircle;
+  final BorderRadius? borderRadius;
 
   const ImageWidget(
-      {super.key, this.imageUrl, this.width, this.height, this.fit, this.isCircle});
+      {super.key, this.imageUrl, this.width, this.height, this.fit, this.isCircle, this.borderRadius = BorderRadius
+          .zero});
 
   @override
   Widget build(BuildContext context) {
     Widget? widget = null;
     if (imageUrl == null || imageUrl!.isEmpty) {
-      widget = const Placeholder();
+      widget = SizedBox(width: width, height: height, child: Placeholder());
     } else
 
     if (imageUrl!.startsWith("http://") || imageUrl!.startsWith("https://")) {
@@ -45,6 +47,9 @@ class ImageWidget extends StatelessWidget {
         child: widget,
       );
     }
-    return widget;
+    return ClipRRect(
+      borderRadius: borderRadius!,
+      child: widget,
+    );
   }
 }
