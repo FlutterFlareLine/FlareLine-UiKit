@@ -1,15 +1,43 @@
 import 'package:flareline_uikit/core/theme/flareline_colors.dart';
-import 'package:flareline_uikit/service/sidebar_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:provider/provider.dart';
+import 'package:window_location_href/window_location_href.dart';
 
 class SideMenuWidget extends StatelessWidget {
   dynamic e;
   bool? isDark;
 
-  SideMenuWidget({super.key, this.e, this.isDark});
+  ValueNotifier<String> expandedMenuName;
+
+  SideMenuWidget({super.key, this.e, this.isDark, required this.expandedMenuName});
+
+  void setExpandedMenuName(String menuName) {
+    if (expandedMenuName.value == menuName) {
+      expandedMenuName.value = '';
+    } else {
+      expandedMenuName.value = menuName;
+    }
+  }
+
+  bool isSelectedPath(BuildContext context, String path) {
+    if (kIsWeb) {
+      String? location = href;
+      if (location != null) {
+        var uri = Uri.dataFromString(location);
+        String? routePath = uri.path;
+
+        return routePath.endsWith(path);
+      }
+    }
+
+    String? routePath = ModalRoute
+        .of(context)
+        ?.settings
+        ?.name;
+    return routePath == path;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,15 +46,12 @@ class SideMenuWidget extends StatelessWidget {
   }
 
   Widget _itemMenuWidget(BuildContext context, e, bool isDark) {
+    String itemMenuName = e['menuName'] ?? '';
     List? childList = e['childList'];
 
-    bool isExpanded =
-        context.watch<SideBarProvider>().isExpanded(e['menuName'], childList);
     bool isSelected = childList != null && childList.isNotEmpty
         ? false
-        : context
-            .watch<SideBarProvider>()
-            .isSelectedPath(context, e['path'] ?? '');
+        : isSelectedPath(context, e['path'] ?? '');
 
     return Column(children: [
       InkWell(
@@ -35,19 +60,19 @@ class SideMenuWidget extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: isSelected
                   ? (isDark
-                      ? const LinearGradient(
-                          begin: Alignment(1.00, -0.03),
-                          end: Alignment(-1, 0.03),
-                          colors: [Color(0x0C316AFF), Color(0x38306AFF)],
-                        )
-                      : const LinearGradient(
-                          begin: Alignment(1.00, -0.03),
-                          end: Alignment(-1, 0.03),
-                          colors: [
-                            FlarelineColors.background,
-                            FlarelineColors.gray
-                          ],
-                        ))
+                  ? const LinearGradient(
+                begin: Alignment(1.00, -0.03),
+                end: Alignment(-1, 0.03),
+                colors: [Color(0x0C316AFF), Color(0x38306AFF)],
+              )
+                  : const LinearGradient(
+                begin: Alignment(1.00, -0.03),
+                end: Alignment(-1, 0.03),
+                colors: [
+                  FlarelineColors.background,
+                  FlarelineColors.gray
+                ],
+              ))
                   : null,
             ),
             child: Row(
@@ -60,33 +85,39 @@ class SideMenuWidget extends StatelessWidget {
                       width: 18,
                       height: 18,
                       color:
-                          isDark ? Colors.white : FlarelineColors.darkBlackText,
+                      isDark ? Colors.white : FlarelineColors.darkBlackText,
                     ),
                   ),
                 Expanded(
                     child: Text(
-                  e['menuName'],
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                      color: isDark
-                          ? Colors.white
-                          : FlarelineColors.darkBlackText),
-                )),
+                      itemMenuName,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: isDark
+                              ? Colors.white
+                              : FlarelineColors.darkBlackText),
+                    )),
                 if (childList != null && childList.isNotEmpty)
-                  Icon(
-                    isExpanded
-                        ? Icons.keyboard_arrow_up
-                        : Icons.keyboard_arrow_down,
-                    color:
-                        isDark ? Colors.white : FlarelineColors.darkBlackText,
-                  )
+                  ValueListenableBuilder(
+                      valueListenable: expandedMenuName,
+                      builder: (ctx, menuName, child) {
+                        bool expanded = menuName == itemMenuName;
+                        return Icon(
+                          expanded
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                          color: isDark
+                              ? Colors.white
+                              : FlarelineColors.darkBlackText,
+                        );
+                      })
               ],
             )),
         onTap: () {
           if (childList != null && childList.isNotEmpty) {
-            context.read<SideBarProvider>().setExpandedMenuName(e['menuName']);
+            setExpandedMenuName(itemMenuName);
           } else {
-            context.read<SideBarProvider>().setExpandedMenuName('');
+            setExpandedMenuName('');
             pushOrJump(context, e);
           }
         },
@@ -95,24 +126,27 @@ class SideMenuWidget extends StatelessWidget {
         height: 10,
       ),
       if (childList != null && childList.isNotEmpty)
-        Visibility(
-            visible: isExpanded,
-            child: Column(
-              children: childList
-                  .map((e) => _itemSubMenuWidget(context, e, isDark))
-                  .toList(),
-            ))
+        ValueListenableBuilder(
+            valueListenable: expandedMenuName,
+            builder: (ctx, menuName, child) {
+              print('${menuName}  ${itemMenuName}');
+              return Visibility(
+                  visible: menuName == itemMenuName,
+                  child: Column(
+                    children: childList
+                        .map((e) => _itemSubMenuWidget(context, e, isDark))
+                        .toList(),
+                  ));
+            })
     ]);
   }
 
   Widget _itemSubMenuWidget(BuildContext context, e, bool isDark) {
-    bool isSelected = context
-        .watch<SideBarProvider>()
-        .isSelectedPath(context, e['path'] ?? '');
-
+    bool isSelected = isSelectedPath(context, e['path'] ?? '');
+    String itemMenuName = e['menuName'] ?? '';
     return InkWell(
       child: Container(
-        padding: EdgeInsets.only(left: 50, top: 10, bottom: 10),
+        padding: const EdgeInsets.only(left: 50, top: 10, bottom: 10),
         color: isSelected
             ? (isDark ? FlarelineColors.darkBackground : FlarelineColors.gray)
             : Colors.transparent,
@@ -120,10 +154,11 @@ class SideMenuWidget extends StatelessWidget {
           children: [
             Expanded(
                 child: Text(
-              e['menuName'],
-              style: TextStyle(
-                  color: isDark ? Colors.white : FlarelineColors.darkBlackText),
-            )),
+                  itemMenuName,
+                  style: TextStyle(
+                      color: isDark ? Colors.white : FlarelineColors
+                          .darkBlackText),
+                )),
           ],
         ),
       ),
@@ -134,13 +169,18 @@ class SideMenuWidget extends StatelessWidget {
   }
 
   pushOrJump(BuildContext context, e) {
-    if (Scaffold.of(context).isDrawerOpen) {
+    if (Scaffold
+        .of(context)
+        .isDrawerOpen) {
       Scaffold.of(context).closeDrawer();
     }
 
     String path = e['path'];
 
-    String? routePath = ModalRoute.of(context)?.settings?.name;
+    String? routePath = ModalRoute
+        .of(context)
+        ?.settings
+        ?.name;
 
     if (path == routePath) {
       return;

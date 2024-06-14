@@ -17,7 +17,9 @@ class SideBarWidget extends StatelessWidget {
   final Color? darkBg;
   final Color? lightBg;
 
-  const SideBarWidget({super.key,
+  final ValueNotifier<String> expandedMenuName = ValueNotifier('');
+
+  SideBarWidget({super.key,
     this.darkBg,
     this.lightBg,
     this.width,
@@ -112,7 +114,10 @@ class SideBarWidget extends StatelessWidget {
             height: 10,
           ),
         Column(
-          children: menuList.map((e) => SideMenuWidget(e: e,isDark:isDark)).toList(),
+          children: menuList.map((e) =>
+              SideMenuWidget(
+                e: e, isDark: isDark, expandedMenuName: expandedMenuName,))
+              .toList(),
         ),
         const SizedBox(
           height: 10,
