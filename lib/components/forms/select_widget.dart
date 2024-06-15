@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 class SelectWidget extends StatelessWidget {
   final List<String> selectionList;
   final ValueChanged<String>? onDropdownChanged;
+  final TextStyle? textStyle;
+
   SelectWidget(
-      {super.key, required this.selectionList, this.onDropdownChanged});
+      {super.key, required this.selectionList, this.onDropdownChanged, this.textStyle});
 
   ValueNotifier<String> countryNotifier = ValueNotifier('');
 
@@ -33,12 +35,12 @@ class SelectWidget extends StatelessWidget {
                 items: selectionList.map((String items) {
                   return DropdownMenuItem(
                     value: items,
-                    child: Text(items),
+                    child: Text(items, style: textStyle,),
                   );
                 }).toList(),
                 onChanged: (value) {
                   countryNotifier.value = value ?? '';
-                  if(onDropdownChanged!=null){
+                  if (onDropdownChanged != null) {
                     onDropdownChanged!(countryNotifier.value);
                   }
                 },

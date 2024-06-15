@@ -45,6 +45,8 @@ class ImageWidget extends StatelessWidget {
     if (isCircle ?? false) {
       return CircleAvatar(
         child: widget,
+        radius: (width ?? 0 / 2),
+        backgroundColor: Colors.transparent,
       );
     }
     return ClipRRect(
