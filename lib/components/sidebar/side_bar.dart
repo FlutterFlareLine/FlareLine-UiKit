@@ -30,18 +30,18 @@ class SideBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    isDark ?? false;
+    bool isDarkTheme = isDark ?? false;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      color: (isDark! ? darkBg : Colors.white),
+      color: (isDarkTheme ? darkBg : Colors.white),
       width: width ?? 280,
       child: Column(children: [
-        _logoWidget(context, isDark!),
+        _logoWidget(context, isDarkTheme),
         const SizedBox(
           height: 30,
         ),
-        Expanded(child: _sideListWidget(context, isDark!))
+        Expanded(child: _sideListWidget(context, isDarkTheme))
       ]),
     );
   }

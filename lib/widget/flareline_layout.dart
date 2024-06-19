@@ -103,15 +103,7 @@ abstract class FlarelineLayoutWidget extends StatelessWidget {
             return Row(
               children: [
                 if (showSideBar)
-                  SideBarWidget(
-                    key: UniqueKey(),
-                    isDark: isDarkTheme(context),
-                    darkBg: sideBarDarkColor,
-                    lightBg: sideBarLightColor,
-                    appName: appName,
-                    sideBarAsset: sideBarAsset(context),
-                    logoWidget: logoWidget(context),
-                  ),
+                  sideBarWidget(context),
                 Expanded(child: rightContentWidget(context))
               ],
             );
@@ -120,9 +112,19 @@ abstract class FlarelineLayoutWidget extends StatelessWidget {
           return rightContentWidget(context);
         },
       ),
-      drawer: SideBarWidget(
-        key: UniqueKey(),
-      ),
+      drawer: sideBarWidget(context),
+    );
+  }
+
+  Widget sideBarWidget(BuildContext context){
+    return SideBarWidget(
+      key: UniqueKey(),
+      isDark: isDarkTheme(context),
+      darkBg: sideBarDarkColor,
+      lightBg: sideBarLightColor,
+      appName: appName,
+      sideBarAsset: sideBarAsset(context),
+      logoWidget: logoWidget(context),
     );
   }
 
