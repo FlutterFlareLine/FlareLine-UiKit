@@ -8,19 +8,18 @@ class ImageWidget extends StatelessWidget {
   final BoxFit? fit;
   final bool? isCircle;
   final BorderRadius? borderRadius;
+  final String? package;
 
   const ImageWidget(
       {super.key, this.imageUrl, this.width, this.height, this.fit, this.isCircle, this.borderRadius = BorderRadius
-          .zero});
+          .zero, this.package});
 
   @override
   Widget build(BuildContext context) {
     Widget? widget = null;
     if (imageUrl == null || imageUrl!.isEmpty) {
       widget = SizedBox(width: width, height: height, child: Placeholder());
-    } else
-
-    if (imageUrl!.startsWith("http://") || imageUrl!.startsWith("https://")) {
+    } else if (imageUrl!.startsWith("http://") || imageUrl!.startsWith("https://")) {
       widget = Image.network(
         imageUrl!,
         width: width,
@@ -33,6 +32,7 @@ class ImageWidget extends StatelessWidget {
         width: width,
         height: height,
         fit: fit ?? BoxFit.cover,
+        package: package,
       );
     } else {
       widget = Image.asset(
@@ -40,6 +40,7 @@ class ImageWidget extends StatelessWidget {
         width: width,
         height: height,
         fit: fit ?? BoxFit.cover,
+        package: package,
       );
     }
     if (isCircle ?? false) {
@@ -49,6 +50,12 @@ class ImageWidget extends StatelessWidget {
         backgroundColor: Colors.transparent,
       );
     }
+
+    if (borderRadius == BorderRadius
+        .zero) {
+      return widget;
+    }
+
     return ClipRRect(
       borderRadius: borderRadius!,
       child: widget,
