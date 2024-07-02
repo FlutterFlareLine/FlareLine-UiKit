@@ -74,6 +74,10 @@ dependencies:
 
   desktop_drop: ^0.4.4
 
+  flutter_bloc: ^8.1.6
+  equatable: ^2.0.5
+  stream_transform: ^2.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
