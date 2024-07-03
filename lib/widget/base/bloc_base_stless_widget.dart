@@ -27,7 +27,7 @@ abstract class BlocBaseStlessWidget<VM extends BlocBaseViewModel<ST>, ST extends
           buildWhen: (previous, current) => needBuild(previous, current),
           builder: (context, state) {
             VM viewModel = BlocProvider.of<VM>(context);
-            return bodyWidget(context, viewModel, state);
+            return BlocListener<VM, ST>(listener: blocListener, child:bodyWidget(context, viewModel, state));
           }),
     );
   }
@@ -36,5 +36,9 @@ abstract class BlocBaseStlessWidget<VM extends BlocBaseViewModel<ST>, ST extends
 
   bool needBuild(ST previous, ST current) {
     return previous.props != current.props;
+  }
+
+
+  void blocListener(BuildContext context, ST state) {
   }
 }
