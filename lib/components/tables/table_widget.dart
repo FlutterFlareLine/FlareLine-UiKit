@@ -11,6 +11,7 @@ import 'package:flareline_uikit/widget/base/base_stless_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 enum CellDataType {
@@ -45,10 +46,8 @@ abstract class TableWidget<S extends BaseTableProvider>
   ///action column width
   double get actionColumnWidth => 200;
 
-
   //paging
   bool get showPaging => true;
-
 
   ///actions widget
   Widget? actionWidgetsBuilder(BuildContext context,
@@ -80,24 +79,19 @@ abstract class TableWidget<S extends BaseTableProvider>
         child: _sfDataGrid(context, headers, rows, viewModel));
   }
 
-  BaseDataGridSource baseDataGridSource(BuildContext context,
+  BaseDataGridSource baseDataGridSource(
+      BuildContext context,
       List<List<TableDataRowsTableDataRows>> rows,
       viewModel,
       Widget? Function(
-          BuildContext context, TableDataRowsTableDataRows columnData)
-      actionWidgetsBuilder,
+              BuildContext context, TableDataRowsTableDataRows columnData)
+          actionWidgetsBuilder,
       customWidgetsBuilder,
       Function(BuildContext context, bool checked,
-          TableDataRowsTableDataRows columnData)
-      onToggleChanged) {
-    return BaseDataGridSource(
-        context,
-        rows,
-        viewModel,
-        actionWidgetsBuilder,
-        customWidgetsBuilder,
-        onToggleChanged,
-        viewModel.pageSize);
+              TableDataRowsTableDataRows columnData)
+          onToggleChanged) {
+    return BaseDataGridSource(context, rows, viewModel, actionWidgetsBuilder,
+        customWidgetsBuilder, onToggleChanged, viewModel.pageSize);
   }
 
   bool get isLastColumnFixed => false;
@@ -116,15 +110,15 @@ abstract class TableWidget<S extends BaseTableProvider>
       context,
       rows,
       viewModel,
-          (BuildContext context, TableDataRowsTableDataRows columnData) {
+      (BuildContext context, TableDataRowsTableDataRows columnData) {
         return actionWidgetsBuilder(context, columnData, viewModel) ??
             SizedBox.shrink();
       },
-          (BuildContext context, TableDataRowsTableDataRows columnData) {
+      (BuildContext context, TableDataRowsTableDataRows columnData) {
         return customWidgetsBuilder(context, columnData, viewModel) ??
             SizedBox.shrink();
       },
-          (BuildContext context, bool checked,
+      (BuildContext context, bool checked,
           TableDataRowsTableDataRows columnData) {
         onToggleChanged(context, checked, columnData);
       },
@@ -136,20 +130,12 @@ abstract class TableWidget<S extends BaseTableProvider>
     return Column(
       children: [
         Expanded(
-            child: SfDataGrid(
-              source: dataGridSource,
-              rowHeight: rowHeight,
-              highlightRowOnHover: highlightRowOnHover,
-              showCheckboxColumn: showCheckboxColumn,
-              gridLinesVisibility: GridLinesVisibility.horizontal,
-              selectionMode: SelectionMode.multiple,
-              checkboxColumnSettings: DataGridCheckboxColumnSettings(
-                  width: 80),
-              footerFrozenColumnsCount: isLastColumnFixed ? 1 : 0,
-              isScrollbarAlwaysShown: true,
-              columnWidthMode: columnWidthMode,
-              columns: headers.map((e) => gridColumnWidget(e)).toList(),
-            )),
+            child: ScreenTypeLayout.builder(
+          desktop: (context) =>
+              responsiveWidget(dataGridSource, headers, false),
+          mobile: (context) => responsiveWidget(dataGridSource, headers, true),
+          tablet: (context) => responsiveWidget(dataGridSource, headers, true),
+        )),
         if (showPaging && rows.isNotEmpty)
           SizedBox(
               height: 60,
@@ -162,6 +148,23 @@ abstract class TableWidget<S extends BaseTableProvider>
     );
   }
 
+  Widget responsiveWidget(
+      BaseDataGridSource dataGridSource, List<dynamic> headers, bool isMobile) {
+    return SfDataGrid(
+      source: dataGridSource,
+      rowHeight: rowHeight,
+      highlightRowOnHover: highlightRowOnHover,
+      showCheckboxColumn: showCheckboxColumn,
+      gridLinesVisibility: GridLinesVisibility.horizontal,
+      selectionMode: SelectionMode.multiple,
+      checkboxColumnSettings: DataGridCheckboxColumnSettings(width: 80),
+      footerFrozenColumnsCount: isLastColumnFixed ? 1 : 0,
+      isScrollbarAlwaysShown: true,
+      columnWidthMode: columnWidthMode,
+      columns: headers.map((e) => gridColumnWidget(e, isMobile)).toList(),
+    );
+  }
+
   double gridColumnWidgetWidth(String e) {
     if (e == 'Action') {
       return actionColumnWidth;
@@ -169,7 +172,11 @@ abstract class TableWidget<S extends BaseTableProvider>
     return double.nan;
   }
 
-  GridColumn gridColumnWidget(dynamic e) {
+  bool isColumnVisible(String columnName, bool isMobile) {
+    return true;
+  }
+
+  GridColumn gridColumnWidget(dynamic e, bool isMobile) {
     String columnName;
     String? align;
     if (e is String) {
@@ -181,10 +188,13 @@ abstract class TableWidget<S extends BaseTableProvider>
     return GridColumn(
       width: gridColumnWidgetWidth(columnName),
       columnName: columnName,
-      label: Container(child: Text(columnName),
-        alignment: 'center' == align ? Alignment.center : ('right' == align
-            ? Alignment.centerRight
-            : Alignment.centerLeft),),
+      visible: isColumnVisible(columnName, isMobile),
+      label: Container(
+        child: Text(columnName),
+        alignment: 'center' == align
+            ? Alignment.center
+            : ('right' == align ? Alignment.centerRight : Alignment.centerLeft),
+      ),
     );
   }
 
@@ -194,29 +204,28 @@ abstract class TableWidget<S extends BaseTableProvider>
     Widget? tools = toolsWidget(context, viewModel);
     return CommonCard(
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (titleText != null)
-                Text(
-                  titleText,
-                  style: const TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-              if (titleText != null)
-                const SizedBox(
-                  height: 16,
-                ),
-              if (tools != null)
-                Container(
-                  child: tools,
-                  margin: EdgeInsets.only(bottom: 16),
-                ),
-              Expanded(child: _buildWidget(context, viewModel)),
-            ],
-          ),
-        ));
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (titleText != null)
+            Text(
+              titleText,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+          if (titleText != null)
+            const SizedBox(
+              height: 16,
+            ),
+          if (tools != null)
+            Container(
+              child: tools,
+              margin: EdgeInsets.only(bottom: 16),
+            ),
+          Expanded(child: _buildWidget(context, viewModel)),
+        ],
+      ),
+    ));
   }
 
   refresh(BuildContext context) {}
@@ -226,12 +235,12 @@ class BaseDataGridSource<F extends BaseTableProvider> extends DataGridSource {
   late BuildContext context;
 
   final Widget? Function(
-      BuildContext context, TableDataRowsTableDataRows columnData)
-  actionWidgetsBuilder;
+          BuildContext context, TableDataRowsTableDataRows columnData)
+      actionWidgetsBuilder;
 
   final Widget? Function(
-      BuildContext context, TableDataRowsTableDataRows columnData)
-  customWidgetsBuilder;
+          BuildContext context, TableDataRowsTableDataRows columnData)
+      customWidgetsBuilder;
 
   final Function(BuildContext context, bool checked,
       TableDataRowsTableDataRows columnData) onToggleChanged;
@@ -240,7 +249,8 @@ class BaseDataGridSource<F extends BaseTableProvider> extends DataGridSource {
 
   late List<List<TableDataRowsTableDataRows>> list;
 
-  BaseDataGridSource(this.context,
+  BaseDataGridSource(
+      this.context,
       this.list,
       F viewModel,
       this.actionWidgetsBuilder,
@@ -258,12 +268,11 @@ class BaseDataGridSource<F extends BaseTableProvider> extends DataGridSource {
       _data = list
           .getRange(startIndex, endIndex)
           .toList(growable: false)
-          .map<DataGridRow>((e) =>
-          DataGridRow(
+          .map<DataGridRow>((e) => DataGridRow(
               cells: e
                   .map<DataGridCell>((item) =>
-                  DataGridCell<TableDataRowsTableDataRows>(
-                      columnName: item.columnName ?? '', value: item))
+                      DataGridCell<TableDataRowsTableDataRows>(
+                          columnName: item.columnName ?? '', value: item))
                   .toList()))
           .toList();
     } else {
@@ -280,16 +289,19 @@ class BaseDataGridSource<F extends BaseTableProvider> extends DataGridSource {
   DataGridRowAdapter? buildRow(DataGridRow row) {
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((dataGridCell) {
-          if (dataGridCell.value is TableDataRowsTableDataRows) {
-            String? align = dataGridCell.value.align;
-            return Container(child: cellWidget(dataGridCell.value),
-              alignment: 'center' == align ? Alignment.center : ('right' ==
-                  align
+      if (dataGridCell.value is TableDataRowsTableDataRows) {
+        String? align = dataGridCell.value.align;
+        return Container(
+          child: cellWidget(dataGridCell.value),
+          alignment: 'center' == align
+              ? Alignment.center
+              : ('right' == align
                   ? Alignment.centerRight
-                  : Alignment.centerLeft),);
-          }
-          return SizedBox.shrink();
-        }).toList());
+                  : Alignment.centerLeft),
+        );
+      }
+      return SizedBox.shrink();
+    }).toList());
   }
 
   @override
@@ -352,12 +364,12 @@ class BaseDataGridSource<F extends BaseTableProvider> extends DataGridSource {
       height: 40,
       child: (columnData.text != null && columnData.text != ''
           ? Image.network(
-        columnData.text!,
-        fit: BoxFit.contain,
-        errorBuilder: (context, exception, stacktrace) {
-          return Text(stacktrace.toString());
-        },
-      )
+              columnData.text!,
+              fit: BoxFit.contain,
+              errorBuilder: (context, exception, stacktrace) {
+                return Text(stacktrace.toString());
+              },
+            )
           : SizedBox.shrink()),
     );
   }
@@ -381,7 +393,6 @@ abstract class BaseTableProvider extends BaseProvider {
     _pageSize = size;
     notifyListeners();
   }
-
 
   String get TAG => this.runtimeType.toString();
 
