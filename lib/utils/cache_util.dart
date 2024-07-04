@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flareline/entity/cache_entity.dart';
+import 'package:flareline_uikit/entity/cache_entity.dart';
 import 'package:get_storage/get_storage.dart';
 
 /// SimpleCache is a simple and fast in-memory cache.
