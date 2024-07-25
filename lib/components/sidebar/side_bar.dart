@@ -16,6 +16,7 @@ class SideBarWidget extends StatelessWidget {
   final bool? isDark;
   final Color? darkBg;
   final Color? lightBg;
+  final Widget? footerWidget;
 
   final ValueNotifier<String> expandedMenuName = ValueNotifier('');
 
@@ -26,6 +27,7 @@ class SideBarWidget extends StatelessWidget {
     this.appName,
     this.sideBarAsset,
     this.logoWidget,
+    this.footerWidget,
     this.isDark});
 
   @override
@@ -41,7 +43,9 @@ class SideBarWidget extends StatelessWidget {
         const SizedBox(
           height: 30,
         ),
-        Expanded(child: _sideListWidget(context, isDarkTheme))
+        Expanded(child: _sideListWidget(context, isDarkTheme)),
+        if(footerWidget!=null)
+          footerWidget!
       ]),
     );
   }

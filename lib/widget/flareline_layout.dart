@@ -69,6 +69,10 @@ abstract class FlarelineLayoutWidget extends StatelessWidget {
     );
   }
 
+  Widget? footerWidget(BuildContext context){
+    return null;
+  }
+
   Widget? toolbarWidget(BuildContext context, bool showDrawer) {
     return null;
   }
@@ -128,6 +132,7 @@ abstract class FlarelineLayoutWidget extends StatelessWidget {
       sideBarAsset: sideBarAsset(context),
       width: sideBarWidth,
       logoWidget: logoWidget(context),
+      footerWidget: footerWidget(context),
     );
   }
 
