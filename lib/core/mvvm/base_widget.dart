@@ -1,9 +1,10 @@
 library flareline_uikit;
-import 'package:flareline_uikit/service/base_provider.dart';
+
+import 'package:flareline_uikit/core/mvvm/base_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-abstract class BaseStlessWidget<VM extends BaseProvider>
+abstract class BaseWidget<VM extends BaseViewModel>
     extends StatelessWidget {
   final Map<String, dynamic>? params;
 
@@ -11,7 +12,7 @@ abstract class BaseStlessWidget<VM extends BaseProvider>
 
   VM viewModelBuilder(BuildContext context);
 
-  BaseStlessWidget({this.params, super.key});
+  BaseWidget({this.params, super.key});
 
   @override
   Widget build(BuildContext context) {

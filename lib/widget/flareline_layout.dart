@@ -31,6 +31,8 @@ abstract class FlarelineLayoutWidget extends StatelessWidget {
 
   Color? get backgroundColor => null;
 
+  double? get sideBarWidth=> null;
+
   String sideBarAsset(BuildContext context) {
     return 'assets/routes/menu_route_en.json';
   }
@@ -124,6 +126,7 @@ abstract class FlarelineLayoutWidget extends StatelessWidget {
       lightBg: sideBarLightColor,
       appName: appName,
       sideBarAsset: sideBarAsset(context),
+      width: sideBarWidth,
       logoWidget: logoWidget(context),
     );
   }

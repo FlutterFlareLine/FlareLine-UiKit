@@ -2,11 +2,10 @@ library flareline_uikit;
 import 'dart:async';
 
 import 'package:flareline_uikit/core/event/global_event.dart';
-import 'package:flareline_uikit/core/mvvm/base_state.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
-abstract class BaseViewModel<S extends BaseState> extends ChangeNotifier {
+abstract class BaseViewModel extends ChangeNotifier {
   var logger = Logger();
 
   bool _isDisposed = false;
@@ -16,10 +15,6 @@ abstract class BaseViewModel<S extends BaseState> extends ChangeNotifier {
   bool get isRegisterEventBus => false;
 
   bool get isStickEventBus => false;
-
-  S? _baseState;
-
-  S? get baseState => _baseState;
 
   StreamSubscription? _eventBusFn;
 
