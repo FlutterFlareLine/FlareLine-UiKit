@@ -1,7 +1,7 @@
-import 'package:flareline_uikit/service/base_provider.dart';
+import 'package:flareline_uikit/core/mvvm/base_viewmodel.dart';
 import 'package:flutter/material.dart';
 
-class ThemeProvider extends BaseProvider {
+class ThemeProvider extends BaseViewModel {
   ThemeMode _themeMode = ThemeMode.light;
 
   ThemeProvider(super.context);

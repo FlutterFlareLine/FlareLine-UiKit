@@ -1,12 +1,12 @@
 import 'package:flareline_uikit/components/forms/select_widget.dart';
+import 'package:flareline_uikit/core/mvvm/base_viewmodel.dart';
+import 'package:flareline_uikit/core/mvvm/base_widget.dart';
 import 'package:flareline_uikit/core/theme/flareline_colors.dart';
-import 'package:flareline_uikit/service/base_provider.dart';
-import 'package:flareline_uikit/widget/base/base_stless_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-class LineChartWidget extends BaseStlessWidget<LineChartProvider> {
+class LineChartWidget extends BaseWidget<LineChartProvider> {
   final String title;
 
   final List<Map<String, dynamic>> datas;
@@ -165,6 +165,6 @@ class LineChartWidget extends BaseStlessWidget<LineChartProvider> {
   }
 }
 
-class LineChartProvider extends BaseProvider {
+class LineChartProvider extends BaseViewModel {
   LineChartProvider(super.context);
 }

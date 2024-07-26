@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:ui';
 
-import 'package:flareline_uikit/service/base_provider.dart';
+import 'package:flareline_uikit/core/mvvm/base_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 
-class LocalizationProvider extends BaseProvider {
+class LocalizationProvider extends BaseViewModel {
   static const Locale en = Locale('en');
 
   LocalizationProvider(super.context);

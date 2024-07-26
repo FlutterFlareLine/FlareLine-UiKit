@@ -5,9 +5,9 @@ import 'package:flareline_uikit/components/forms/switch_widget.dart';
 import 'package:flareline_uikit/components/loading/loading.dart';
 import 'package:flareline_uikit/components/tags/tag_widget.dart';
 import 'package:flareline_uikit/core/event/global_event.dart';
+import 'package:flareline_uikit/core/mvvm/base_viewmodel.dart';
+import 'package:flareline_uikit/core/mvvm/base_widget.dart';
 import 'package:flareline_uikit/entity/table_data_entity.dart';
-import 'package:flareline_uikit/service/base_provider.dart';
-import 'package:flareline_uikit/widget/base/base_stless_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
@@ -30,7 +30,7 @@ enum CellDataType {
 }
 
 abstract class TableWidget<S extends BaseTableProvider>
-    extends BaseStlessWidget<S> {
+    extends BaseWidget<S> {
   TableWidget({super.params, super.key});
 
   /// title
@@ -375,7 +375,7 @@ class BaseDataGridSource<F extends BaseTableProvider> extends DataGridSource {
   }
 }
 
-abstract class BaseTableProvider extends BaseProvider {
+abstract class BaseTableProvider extends BaseViewModel {
   BaseTableProvider(super.context);
 
   TableDataEntity? _tableDataEntity;
