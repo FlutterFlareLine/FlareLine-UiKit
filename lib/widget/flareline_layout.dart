@@ -25,22 +25,22 @@ abstract class FlarelineLayoutWidget extends StatelessWidget {
 
   bool get isContentScroll => true;
 
+  double get logoFontSize => 30;
+
   Color get sideBarDarkColor => FlarelineColors.darkBackground;
 
   Color get sideBarLightColor => Colors.white;
 
   Color? get backgroundColor => null;
 
-  double? get sideBarWidth=> null;
+  double? get sideBarWidth => null;
 
   String sideBarAsset(BuildContext context) {
     return 'assets/routes/menu_route_en.json';
   }
 
   bool isDarkTheme(BuildContext context) {
-    return Theme
-        .of(context)
-        .brightness == Brightness.dark;
+    return Theme.of(context).brightness == Brightness.dark;
   }
 
   EdgeInsetsGeometry? get padding =>
@@ -69,7 +69,7 @@ abstract class FlarelineLayoutWidget extends StatelessWidget {
     );
   }
 
-  Widget? footerWidget(BuildContext context){
+  Widget? footerWidget(BuildContext context) {
     return null;
   }
 
@@ -108,8 +108,7 @@ abstract class FlarelineLayoutWidget extends StatelessWidget {
           if (sizingInformation.deviceScreenType == DeviceScreenType.desktop) {
             return Row(
               children: [
-                if (showSideBar)
-                  sideBarWidget(context),
+                if (showSideBar) sideBarWidget(context),
                 Expanded(child: rightContentWidget(context))
               ],
             );
@@ -122,7 +121,7 @@ abstract class FlarelineLayoutWidget extends StatelessWidget {
     );
   }
 
-  Widget sideBarWidget(BuildContext context){
+  Widget sideBarWidget(BuildContext context) {
     return SideBarWidget(
       key: UniqueKey(),
       isDark: isDarkTheme(context),
@@ -133,6 +132,7 @@ abstract class FlarelineLayoutWidget extends StatelessWidget {
       width: sideBarWidth,
       logoWidget: logoWidget(context),
       footerWidget: footerWidget(context),
+      logoFontSize: logoFontSize,
     );
   }
 
@@ -154,25 +154,25 @@ abstract class FlarelineLayoutWidget extends StatelessWidget {
           ),
         isContentScroll
             ? ScreenTypeLayout.builder(
-          desktop: contentDesktopWidget,
-          mobile: contentMobileWidget,
-          tablet: contentMobileWidget,
-        )
+                desktop: contentDesktopWidget,
+                mobile: contentMobileWidget,
+                tablet: contentMobileWidget,
+              )
             : Expanded(
-            child: ScreenTypeLayout.builder(
-              desktop: contentDesktopWidget,
-              mobile: contentMobileWidget,
-              tablet: contentMobileWidget,
-            ))
+                child: ScreenTypeLayout.builder(
+                desktop: contentDesktopWidget,
+                mobile: contentMobileWidget,
+                tablet: contentMobileWidget,
+              ))
       ],
     );
 
     return Column(children: [
       if (showToolBar)
         toolbarWidget(
-          context,
-          showDrawer,
-        ) ??
+              context,
+              showDrawer,
+            ) ??
             SizedBox.shrink(),
       if (showToolBar)
         const SizedBox(
@@ -180,14 +180,14 @@ abstract class FlarelineLayoutWidget extends StatelessWidget {
         ),
       Expanded(
           child: Container(
-            width: double.maxFinite,
-            height: double.maxFinite,
-            alignment: isAlignCenter ? Alignment.center : null,
-            padding: padding,
-            child: isContentScroll
-                ? SingleChildScrollView(child: contentWidget)
-                : contentWidget,
-          ))
+        width: double.maxFinite,
+        height: double.maxFinite,
+        alignment: isAlignCenter ? Alignment.center : null,
+        padding: padding,
+        child: isContentScroll
+            ? SingleChildScrollView(child: contentWidget)
+            : contentWidget,
+      ))
     ]);
   }
 }

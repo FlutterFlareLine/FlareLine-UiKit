@@ -17,6 +17,7 @@ class SideBarWidget extends StatelessWidget {
   final Color? darkBg;
   final Color? lightBg;
   final Widget? footerWidget;
+  final double? logoFontSize;
 
   final ValueNotifier<String> expandedMenuName = ValueNotifier('');
 
@@ -28,6 +29,7 @@ class SideBarWidget extends StatelessWidget {
     this.sideBarAsset,
     this.logoWidget,
     this.footerWidget,
+    this.logoFontSize=30,
     this.isDark});
 
   @override
@@ -65,7 +67,7 @@ class SideBarWidget extends StatelessWidget {
               appName ?? '',
               style: TextStyle(
                   color: isDark ? Colors.white : FlarelineColors.darkBlackText,
-                  fontSize: 32),
+                  fontSize: logoFontSize),
             ))
       ],
     );
